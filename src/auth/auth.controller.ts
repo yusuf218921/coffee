@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, HttpStatus, Next, Post, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from './dtos/login-user.dto';
 import { CreateUserDto } from './dtos/create-user-dto';
@@ -9,12 +9,13 @@ export class AuthController {
 
   @Post('register')
   async register(@Body() createUserDto: CreateUserDto) {
-    await this.authService.register(createUserDto);
+    if (await this.authService.register(createUserDto))
+      return { message: 'register is succesful', status: HttpStatus.CREATED };
   }
 
   @Post('login')
   async login(@Body() loginUserDto: LoginUserDto) {
     const response = await this.authService.login(loginUserDto);
-    return response;
+    return { message: response };
   }
 }

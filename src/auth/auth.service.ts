@@ -7,8 +7,8 @@ import { CreateUserDto } from './dtos/create-user-dto';
 export class AuthService {
   constructor(private readonly usersService: UsersService) {}
 
-  async register(createUserDto: CreateUserDto): Promise<void> {
-    this.usersService.createUser(createUserDto);
+  async register(createUserDto: CreateUserDto): Promise<Boolean> {
+    return this.usersService.createUser(createUserDto);
   }
   async login(loginUserDto: LoginUserDto): Promise<string> {
     if (await this.usersService.validateUser(loginUserDto))

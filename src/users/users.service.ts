@@ -10,8 +10,8 @@ import { LoginUserDto } from 'src/auth/dtos/login-user.dto';
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  async findByEmail(email: string): Promise<User | null> {
-    return this.userModel.findOne({ email }).select('-passwordHash').exec();
+  private async findByEmail(email: string): Promise<User | null> {
+    return this.userModel.findOne({ email }).exec();
   }
 
   async validateUser(loginUserDto: LoginUserDto): Promise<Boolean> {
@@ -25,7 +25,7 @@ export class UsersService {
     return isPasswordValid;
   }
 
-  async createUser(createUserDto: CreateUserDto): Promise<void> {
+  async createUser(createUserDto: CreateUserDto): Promise<Boolean> {
     const existingUser = await this.userModel
       .findOne({
         $or: [
@@ -46,8 +46,9 @@ export class UsersService {
     );
     const newUser = new this.userModel({
       ...createUserDto,
-      password: hashedPassword,
+      passwordHash: hashedPassword,
     });
     await newUser.save();
+    return true;
   }
 }
